@@ -65,7 +65,7 @@ if not telco_sample.empty:
       #Asignamos a un nuevo dataframe el dataset original sin las columnas que descartamos en análisis de variables
       X_pre = telco_sample.drop(['CustomerID', 'Count', 'Country', 'State', 'Lat Long', 'Total Charges', 'City', 'Zip Code'], axis=1)
 
-      #Convertimos columnas a número y variables categóricas a nuevas variables binarias.
+      #Convertimos columnas a número y variables categóricas a nuevas variables binarias
       cols = ['Longitude', 'Latitude', 'Monthly Charges']
       X_pre[cols] = X_pre[cols].apply(lambda x: x.str.replace(',', '.')).apply(lambda x: x.str.replace(' ', '0')).apply(lambda x: pd.to_numeric(x))
       X = pd.get_dummies(X_pre)
