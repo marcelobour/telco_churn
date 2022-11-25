@@ -11,6 +11,14 @@ url_data='https://raw.githubusercontent.com/marcelobour/telco_churn/main/Telco_c
 #Ruta del modelo entrenado
 url_model='https://raw.githubusercontent.com/marcelobour/app2/main/aucpr-precision-8var.txt'
 
+#Generamos dataframe de ciudades y coordenadas
+coor_cols = ['City', 'Longitude', 'Latitude']
+telco = pd.read_csv(url_data, sep=';', usecols=coor_cols)
+to_num_cols = ['Longitude', 'Latitude']
+telco[to_num_cols] = telco[to_num_cols].apply(lambda x: x.str.replace(',', '.')).apply(lambda x: x.str.replace(' ', '0')).apply(lambda x: pd.to_numeric(x))
+cities_coor = telco.groupby(['City']).mean()
+cities = np.sort(telco['City'].unique())
+
 #Colocamos título
 st.title("Probabilidad de baja")
 
@@ -33,4 +41,5 @@ with st.sidebar:
   internet = st.radio('Internet Service', ('Fiber optic', 'DSL', 'No'))
   depen = st.checkbox('Dependents')
   paper = st.checkbox('Paperless Billing')
+  city = st.selectbox('City', options=cities)  
   submit = st.button('Enviar')
