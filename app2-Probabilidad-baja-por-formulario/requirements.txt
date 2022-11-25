@@ -1,0 +1,5 @@
+numpy==1.22.3
+pandas==1.4.1
+requests==2.26.0
+streamlit==1.14.0
+xgboost==1.7.1
