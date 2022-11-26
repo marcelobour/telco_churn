@@ -10,7 +10,7 @@ import plotly.graph_objects as go
 url_data='https://raw.githubusercontent.com/marcelobour/telco_churn/main/Telco_customer_churn.csv'
 
 #Ruta del modelo entrenado
-url_model='https://raw.githubusercontent.com/marcelobour/app2/main/aucpr-precision-8var.txt'
+url_model='https://raw.githubusercontent.com/marcelobour/telco_churn/app2-Probabilidad-baja-por-formulario/aucpr-precision-8var.txt'
 
 #Quitamos margen de arriba excesivo por defecto
 hide_streamlit_style = """
