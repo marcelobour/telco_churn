@@ -97,24 +97,27 @@ if submit:
   #Seteamos color de la barra según valor de predicción
   if range_1[0] <= pred < range_1[1]:
     bar_color = ver_int
+    zone = 'baja'
   elif range_2[0] <= pred < range_2[1]:
     bar_color = ama_int
+    zone = 'media'
   else:
     bar_color = roj_int
+    zone = 'alta'
 
   #Generamos gráfico semaforizado
   fig = go.Figure(go.Indicator(
     domain = {'x': [0, 1], 'y': [0, 1]},
+    number = {'valueformat': '.0%'},
     value = pred,
-    
     mode = "gauge+number",
-    title = {'text': "Probabilidad de baja"},
     gauge = {'axis': {'range': [None, 1], 'nticks': 20, 'ticklen': 0, 'tickformat': '.0%'},
              'borderwidth': 0,
              'bar': {'color': bar_color}, 
              'steps' : [{'range': [0, 0.5], 'color': ver_sua}, {'range': [0.5, 0.8], 'color': ama_sua}, {'range': [0.8, 1], 'color': roj_sua}]
             }))
 
+#Generamos indicador semaforizado
 fig = go.Figure(go.Indicator(
 domain = {'x': [0, 1], 'y': [0, 1]},
 value = pred,
@@ -127,3 +130,17 @@ gauge = {'axis': {'range': [None, 1], 'nticks': 20, 'ticklen': 0, 'tickformat': 
            'steps' : [{'range': [0, 0.5], 'color': ver_sua}, {'range': [0.5, 0.8], 'color': ama_sua}, {'range': [0.8, 1], 'color': roj_sua}]
           }))
 st.plotly_chart(fig)  
+
+#Colocamos leyenda con indicación para usuario
+if zone=='alta':
+  instruc = 'Ofrecer transferencia a Tech Support y bonificación del servicio por 1 mes.'
+elif zone=='media':
+  instruc = 'Ofrecer transferencia a Tech Support por única vez.'
+elif zone=='baja':
+  instruc = 'Continuar con procedimiento de atención.'
+else:
+  instruc = 'Ingrese datos de cliente y presione Enviar para conocer probabilidad de baja'
+
+#Mostramos instrucción
+if instruc is not None:
+  st.subheader(instruc, anchor='instruccion')
