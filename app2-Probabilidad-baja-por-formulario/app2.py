@@ -113,18 +113,6 @@ if submit:
     bar_color = roj_int
     zone = 'alta'
 
-  #Generamos gráfico semaforizado
-  fig = go.Figure(go.Indicator(
-    domain = {'x': [0, 1], 'y': [0, 1]},
-    number = {'valueformat': '.0%'},
-    value = pred,
-    mode = "gauge+number",
-    gauge = {'axis': {'range': [None, 1], 'nticks': 20, 'ticklen': 0, 'tickformat': '.0%'},
-             'borderwidth': 0,
-             'bar': {'color': bar_color}, 
-             'steps' : [{'range': [0, 0.5], 'color': ver_sua}, {'range': [0.5, 0.8], 'color': ama_sua}, {'range': [0.8, 1], 'color': roj_sua}]
-            }))
-
 #Generamos indicador semaforizado
 fig = go.Figure(go.Indicator(
 domain = {'x': [0, 1], 'y': [0, 1]},
@@ -135,7 +123,7 @@ title = {'text': ""},
 gauge = {'axis': {'range': [None, 1], 'nticks': 20, 'ticklen': 0, 'tickformat': '.0%'},
            'borderwidth': 0,
            'bar': {'color': bar_color},
-           'steps' : [{'range': [0, 0.5], 'color': ver_sua}, {'range': [0.5, 0.8], 'color': ama_sua}, {'range': [0.8, 1], 'color': roj_sua}]
+           'steps' : [{'range': range_1, 'color': ver_sua}, {'range': range_2, 'color': ama_sua}, {'range': range_3, 'color': roj_sua}]
           }))
 st.plotly_chart(fig)  
 
