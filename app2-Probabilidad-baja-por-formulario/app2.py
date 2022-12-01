@@ -54,9 +54,9 @@ with st.sidebar:
   submit = st.button('Enviar')
 
 #Definimos rangos
-range_1 = [0, 0.5] 
-range_2 = [0.5, 0.8]
-range_3 = [0.8, 1]
+range_1 = [0, 0.6] 
+range_2 = [0.6, 0.7]
+range_3 = [0.7, 1]
 
 #Colores para rangos
 ver_sua = '#bae3cd'
