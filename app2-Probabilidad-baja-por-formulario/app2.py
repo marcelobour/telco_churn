@@ -7,7 +7,7 @@ import numpy as np
 import plotly.graph_objects as go
 
 #Ruta del dataset
-url_data='https://raw.githubusercontent.com/marcelobour/telco_churn/main/Telco_customer_churn.csv'
+url_data='https://raw.githubusercontent.com/marcelobour/telco_churn/main/data/Telco_customer_churn.csv'
 
 #Ruta del modelo entrenado
 url_model='https://raw.githubusercontent.com/marcelobour/telco_churn/main/app2-Probabilidad-baja-por-formulario/aucpr-precision-8var.txt'
