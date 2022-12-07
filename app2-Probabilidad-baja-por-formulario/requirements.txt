@@ -4,3 +4,4 @@ plotly==5.11.0
 requests==2.26.0
 streamlit==1.14.0
 xgboost==0.90
+scikit-learn
