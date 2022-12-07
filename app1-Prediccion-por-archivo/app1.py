@@ -6,7 +6,7 @@ import xgboost as xgb
 from sklearn.preprocessing import LabelEncoder
 
 #Ruta del dataset
-url='https://raw.githubusercontent.com/marcelobour/telco_churn/main/Telco_customer_churn.csv'
+url='https://raw.githubusercontent.com/marcelobour/telco_churn/main/data/Telco_customer_churn.csv'
 
 #Quitamos margen de arriba excesivo por defecto
 hide_streamlit_style = """
