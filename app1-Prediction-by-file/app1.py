@@ -1,76 +1,76 @@
-#Importación de librerías
+# Importing libraries
 import streamlit as st
 import pandas as pd
 import requests
 import xgboost as xgb
 from sklearn.preprocessing import LabelEncoder
 
-#Ruta del dataset
+# Dataset url
 url='https://raw.githubusercontent.com/marcelobour/telco_churn/main/data/Telco_customer_churn.csv'
 
-#Quitamos margen de arriba excesivo por defecto
+# Remove default excessive top margin
 hide_streamlit_style = """
 <style>
     #root > div:nth-child(1) > div > div > div > div > section > div {padding-top: 2rem;}
 </style>
 """
-st.title("Predictor de Churn")
+st.title("Churn predictor")
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
-#st.markdown("***") #Esto agrega una línea pero mucho margen arriba
+#st.markdown("***") # This adds a line on top
 
-'##### 1) Seleccione el modelo predictivo orientado a:'
-opa = 'a) Precisión: para lograr en torno a un 68% de precisión y capturar 59% de potenciales bajas'
-opb = 'b) Maximizar la captura: para lograr capturar entorno a un 83% de potenciales bajas con una precisión del 52%' 
-modelo = st.radio(label = 'tipo modelo', options = [opa, opb], label_visibility='collapsed')
+'##### 1) Select predictive model oriented towards:'
+opa = 'a) Accuracy: to achieve around 68% accuracy and capture 59% of potential lefts.'
+opb = 'b) Recall: la captura: to capture around 83% of potential lefts with 52% accuracy.' 
+modelo = st.radio(label = 'model type', options = [opa, opb], label_visibility='collapsed')
 
 ''
-'##### 2) Elija el archivo sobre el que desea pronosticar churn:'
+'##### 2) Choose the file on which you want to predict churn:'
 
-#Creamos dataframe donde pondremos los datos
+# Create dataframe to put data
 telco_sample = pd.DataFrame()
 
-#Generamos opción para datos automáticos
-if st.checkbox('Generar set de datos aleatorios de prueba automáticamente'):
+# Option por automatic data
+if st.checkbox('Auto generate random test dataset'):
     
-  #Definimos función para obtener por única vez datos sampleados y quitamos columnas relacionadas con pronósticos precios y churn
+  # Define a function to get the sampled data once and remove columns related to price and churn forecasting
   @st.cache
   def get_sample():
     sample = pd.read_csv(url, sep=';').sample(n=20).drop(['Churn Value', 'Churn Label', 'Churn Score', 'Churn Reason', 'CLTV'], axis=1)
     return sample
   telco_sample = get_sample()
 
-#Si no se tilda casilla podemos subir un archivo
+# If not automatic then allow to upload file
 else:
-  #Subimos y leemos el archivo
-  datos = st.file_uploader('Seleccione un archivo')
+  # File upload an read
+  datos = st.file_uploader('Select file')
   if datos is not None:
     telco_sample = pd.read_csv(datos, sep = ',')
 
-#Mostramos los datos cargados
+# Show sampled o uploaded data
 if not telco_sample.empty:
-  'Datos cargados'
+  'Loaded data'
   telco_sorted = telco_sample.sort_index().reset_index(drop=True)
   st.dataframe(telco_sorted)
 
-  #Obtenemos columnas de los datos cargados y comparamos contra lo esperado
+  # Get loaded data columns and compare them against what is expected
   expected_cols = pd.read_csv(url, sep=';').drop(['Churn Value', 'Churn Label', 'Churn Score', 'Churn Reason', 'CLTV'], axis=1).columns
   if len(expected_cols) != len(telco_sample.columns):
-    st.error('El archivo cargado posee una cantidad de columnas diferente a las esperadas por el modelo.', icon="🚨")
+    st.error('Loaded file has a different number of columns than expected by the model.', icon="🚨")
   else:
     if (expected_cols != telco_sample.columns).any():
-      st.error('El archivo cargado no posee los campos esperados por el modelo.', icon="🚨")
+      st.error('Loaded file does not have the fields expected by the model.', icon="🚨")
     else:
-      #Terminamos de preparar los datos elinando más columnas, convirtiendo a números otras y convirtiendo variables categóricas en binarias
-      #Asignamos a un nuevo dataframe el dataset original sin las columnas que descartamos en análisis de variables
+      # We finished preparing the data by removing more columns, converting others to numbers, and converting categorical variables to binaries
+      # We assign to a new dataframe the original dataset without the columns that we discarded in the variable analysis
       X_pre = telco_sample.drop(['CustomerID', 'Count', 'Country', 'State', 'Lat Long', 'Total Charges', 'City', 'Zip Code'], axis=1)
 
-      #Convertimos columnas a número y variables categóricas a nuevas variables binarias
+      # Convert columns into numbers and categorical variables into new binary variables
       cols = ['Longitude', 'Latitude', 'Monthly Charges']
       X_pre[cols] = X_pre[cols].apply(lambda x: x.str.replace(',', '.')).apply(lambda x: x.str.replace(' ', '0')).apply(lambda x: pd.to_numeric(x))
       X = pd.get_dummies(X_pre)
 
-      #Obtenemos modelo entrenado desde github
+      # Get trained model from github
       if modelo == opa:
         url = 'https://raw.githubusercontent.com/neoncoip/telco_churn/main/modelos/aucpr-average_precision.txt'
       else: 
@@ -79,19 +79,19 @@ if not telco_sample.empty:
       with open("modelo.txt", "wb") as file:
         file.write(req.content)
 
-      #Intanciamos y cargamos modelo entrenado y 
+      # Instantiate and load the trained model
       model_replica = xgb.XGBClassifier()
       model_replica.load_model("modelo.txt")
 
-      #Indicamos etiquetas
+      # Indicate labels
       model_replica._le = LabelEncoder().fit([0, 1])
 
-      #Generamos predicción sobre datos, la anexamos a la planilla de datos y la mostramos
+      # Generates predictions on data, appends them to the data spreadsheet, and displays
       Y = model_replica.predict(X)
       telco_sorted.insert(loc = 0, column = 'Churn prediction', value = Y)
-      'Datos + Predicción'
+      'Data + Prediction'
       telco_sorted
       
-      #Guardamos el archivo como csv y permitimos descargar
+      # Save the file as CSV and allow downloading
       telco_csv = telco_sorted.to_csv().encode('utf-8')
-      st.download_button(label="Descargar datos con predicción", data=telco_csv, file_name="Predicciones_churn.csv", mime="text/csv")
+      st.download_button(label="Download prediction", data=telco_csv, file_name="Predicciones_churn.csv", mime="text/csv")
