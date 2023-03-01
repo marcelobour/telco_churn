@@ -72,9 +72,11 @@ if not telco_sample.empty:
 
       # Get trained model from github
       if modelo == opa:
-        url = 'https://raw.githubusercontent.com/neoncoip/telco_churn/main/models/aucpr-average_precision.txt'
+        #url = 'https://raw.githubusercontent.com/neoncoip/telco_churn/main/models/aucpr-average_precision.txt'
+        url = '../models/aucpr-average_precision.txt'
       else: 
-        url = 'https://raw.githubusercontent.com/neoncoip/telco_churn/main/models/aucpr-recall.txt'
+        #url = 'https://raw.githubusercontent.com/neoncoip/telco_churn/main/models/aucpr-recall.txt'
+        url = '../models/aucpr-recall.txt'
       req = requests.get(url)
       with open("modelo.txt", "wb") as file:
         file.write(req.content)
