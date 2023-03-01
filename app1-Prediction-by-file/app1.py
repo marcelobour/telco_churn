@@ -20,8 +20,8 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 #st.markdown("***") # This adds a line on top
 
 '##### 1) Select predictive model oriented towards:'
-opa = 'a) Accuracy: to achieve around 68% accuracy and capture 59% of potential lefts.'
-opb = 'b) Recall: la captura: to capture around 83% of potential lefts with 52% accuracy.' 
+opa = 'a) Precision: to achieve around 68% precision and capture 59% of potential lefts.'
+opb = 'b) Recall: to capture around 83% of potential lefts with 52% precision.' 
 modelo = st.radio(label = 'model type', options = [opa, opb], label_visibility='collapsed')
 
 ''
@@ -72,9 +72,9 @@ if not telco_sample.empty:
 
       # Get trained model from github
       if modelo == opa:
-        url = 'https://raw.githubusercontent.com/neoncoip/telco_churn/main/modelos/aucpr-average_precision.txt'
+        url = 'https://raw.githubusercontent.com/neoncoip/telco_churn/main/models/aucpr-average_precision.txt'
       else: 
-        url = 'https://raw.githubusercontent.com/neoncoip/telco_churn/main/modelos/aucpr-recall.txt'
+        url = 'https://raw.githubusercontent.com/neoncoip/telco_churn/main/models/aucpr-recall.txt'
       req = requests.get(url)
       with open("modelo.txt", "wb") as file:
         file.write(req.content)
@@ -94,4 +94,4 @@ if not telco_sample.empty:
       
       # Save the file as CSV and allow downloading
       telco_csv = telco_sorted.to_csv().encode('utf-8')
-      st.download_button(label="Download prediction", data=telco_csv, file_name="Predicciones_churn.csv", mime="text/csv")
+      st.download_button(label="Download prediction", data=telco_csv, file_name="Churn_predictions.csv", mime="text/csv")
