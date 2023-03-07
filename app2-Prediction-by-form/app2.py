@@ -10,7 +10,7 @@ import plotly.graph_objects as go
 url_data='https://raw.githubusercontent.com/marcelobour/telco_churn/main/data/Telco_customer_churn.csv'
 
 # Trained model path
-url_model='https://raw.githubusercontent.com/marcelobour/telco_churn/main/app2-Probabilidad-baja-por-formulario/aucpr-precision-8var.txt'
+url_model='https://raw.githubusercontent.com/marcelobour/telco_churn/main/app2-Prediction-by-form/aucpr-precision-8var.txt'
 
 # Remove default excessive top margin
 hide_streamlit_style = """
@@ -26,7 +26,7 @@ st.title("Leaving Probability")
 # Define centered alignment for the title since Streamlit doesn't have the option.
 title_alignment="""
 <style>
-#Leaving-Probability {
+#leaving-probability {
   text-align: center
 }
 </style>
