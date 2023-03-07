@@ -43,7 +43,7 @@ cities = np.sort(telco['City'].unique())
 
 # Creamos variables for 8 variables input
 with st.sidebar:
-  '# Datos de cliente'
+  '# Customer data'
   charges = st.slider('Monthly Charges', 10, 120)
   tenure = st.slider('Tenure Months', 0, 80)
   contract = st.radio('Contract', ('Month to month', 'One year', 'Two year'))
