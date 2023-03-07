@@ -1,4 +1,4 @@
-#Importación librerías
+# Libraries import
 import streamlit as st
 import pandas as pd
 import requests
@@ -6,13 +6,13 @@ import xgboost as xgb
 import numpy as np
 import plotly.graph_objects as go
 
-#Ruta del dataset
+# Dataset path
 url_data='https://raw.githubusercontent.com/marcelobour/telco_churn/main/data/Telco_customer_churn.csv'
 
-#Ruta del modelo entrenado
+# Trained model path
 url_model='https://raw.githubusercontent.com/marcelobour/telco_churn/main/app2-Probabilidad-baja-por-formulario/aucpr-precision-8var.txt'
 
-#Quitamos margen de arriba excesivo por defecto
+# Remove default excessive top margin
 hide_streamlit_style = """
 <style>
     #root > div:nth-child(1) > div > div > div > div > section > div {padding-top: 2rem;}
@@ -20,20 +20,20 @@ hide_streamlit_style = """
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
-#Colocamos título
-st.title("Probabilidad de baja")
+# Set title
+st.title("Leaving Probability")
 
-#Definimos alineación centrada para el título ya que Stramlit no tiene opción
+# Define centered alignment for the title since Streamlit doesn't have the option.
 title_alignment="""
 <style>
-#probabilidad-de-baja {
+#Leaving-Probability {
   text-align: center
 }
 </style>
 """
 st.markdown(title_alignment, unsafe_allow_html=True)
 
-#Generamos dataframe de ciudades y coordenadas
+# Create cities and coordinates dataframe
 coor_cols = ['City', 'Longitude', 'Latitude']
 telco = pd.read_csv(url_data, sep=';', usecols=coor_cols)
 to_num_cols = ['Longitude', 'Latitude']
@@ -41,7 +41,7 @@ telco[to_num_cols] = telco[to_num_cols].apply(lambda x: x.str.replace(',', '.'))
 cities_coor = telco.groupby(['City']).mean()
 cities = np.sort(telco['City'].unique())
 
-#Creamos los elementos para cargar el formulario de 8 variables en la barra lateral
+# Creamos variables for 8 variables input
 with st.sidebar:
   '# Datos de cliente'
   charges = st.slider('Monthly Charges', 10, 120)
@@ -53,12 +53,12 @@ with st.sidebar:
   city = st.selectbox('City', options=cities)  
   submit = st.button('Enviar')
 
-#Definimos rangos
+# Define ranges
 range_1 = [0, 0.6] 
 range_2 = [0.6, 0.7]
 range_3 = [0.7, 1]
 
-#Colores para rangos
+# Ranges colores
 ver_sua = '#bae3cd'
 ver_int = '#59b378'
 ama_sua = '#f7edae'
@@ -66,19 +66,19 @@ ama_int = '#ebc51c'
 roj_sua = '#f0a8a8'
 roj_int = '#d14b4b'
 
-#Asignamos valores por defecto para gráfico vacío incial
+# Assign colors for initial empty plot
 bar_color = None
 pred = None
 zone = None
 instruc = None
 
-#Si se envió formulario preparamos datos y hacemos predicción
+# If form is submited preapre data and get prediction
 if submit:
-  #Asignamos valores de latitud y longitud en función a la ciudad seleccionada
+  # Assign lat and long values for selected city
   lat = cities_coor.loc[city][0]
   lon = cities_coor.loc[city][1]
 
-  #Generamos diccionario y lo convertimos en dataframe para alimentar el modelo entrenado
+  # Create dictionary and coonvert to dataframe to input trained model
   form_dict={
     'Tenure Months': tenure,
     'Monthly Charges': charges,
@@ -90,19 +90,19 @@ if submit:
     'Internet Service_Fiber optic': 1 if internet=='Fiber optic' else 0}
   form = pd.DataFrame(form_dict, index=[0])
 
-  #Obtenemos modelo entrenado desde github
+  # Get trained model from github
   req = requests.get(url_model)
   with open("modelo.txt", "wb") as file:
     file.write(req.content)
 
-  #Intanciamos y cargamos modelo entrenado
+  # Instantiate and load trained model
   model_replica = xgb.XGBClassifier()
   model_replica.load_model("modelo.txt")
 
-  #Generamos predicción sobre datos, la anexamos a la planilla de datos y la mostramos
+  # Generate prediction, append to data and display
   pred = model_replica.predict_proba(form)[:,1][0]
 
-  #Seteamos color de la barra según valor de predicción
+  # Set bar color according to range
   if range_1[0] <= pred < range_1[1]:
     bar_color = ver_int
     zone = 'baja'
@@ -113,7 +113,7 @@ if submit:
     bar_color = roj_int
     zone = 'alta'
 
-#Generamos indicador semaforizado
+# Create colored status indicator
 fig = go.Figure(go.Indicator(
 domain = {'x': [0, 1], 'y': [0, 1]},
 value = pred,
@@ -127,21 +127,21 @@ gauge = {'axis': {'range': [None, 1], 'nticks': 20, 'ticklen': 0, 'tickformat': 
           }))
 st.plotly_chart(fig)  
 
-#Colocamos leyenda con indicación para usuario
+# Choose user instructions
 if zone=='alta':
-  instruc = 'Ofrecer transferencia a Tech Support y bonificación del servicio por 1 mes.'
+  instruc = 'Offer transfer to Tech Support and a service bonus for 1 month.'
 elif zone=='media':
-  instruc = 'Ofrecer transferencia a Tech Support por única vez.'
+  instruc = 'Offer a one-time transfer to Tech Support.'
 elif zone=='baja':
-  instruc = 'Continuar con procedimiento de atención.'
+  instruc = 'Proceed with standard procedure'
 else:
-  instruc = 'Ingrese datos de cliente y presione Enviar para conocer probabilidad de baja'
+  instruc = 'Enter customer information and press "Send" to find out the probability of churn'
 
-#Mostramos instrucción
+# Display intruction
 if instruc is not None:
   st.subheader(instruc, anchor='instruccion')
 
-  #Centramos la instrucción
+  # Center instruction
   inst_alin="""
   <style>
   #instruccion {
